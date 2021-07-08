@@ -47,12 +47,16 @@ public:
 	int getNeighborCount(int i) {
 		int n = 0;
 
-		for (int x = -1; x <= 1; x++)
+		int xStart = (i % roomWidth == 0) ? 0 : -1;
+		int xEnd = (i % roomWidth == roomWidth - 1) ? 0 : 1;
+		int yStart = (i < roomWidth) ? 0 : -1;
+		int yEnd = (i > roomWidth * roomHeight - roomWidth) ? 0 : 1;
+		for (int x = xStart; x <= xEnd; x++)
 		{
-			for (int y = -1; y <= 1; y++)
+			for (int y = yStart; y <= yEnd; y++)
 			{
 				int l = y * roomWidth + x + i;
-				if (l >= 0 && l < (roomWidth * roomHeight) && l != i)
+				if (l != i)
 					n += room[l];
 			}
 		}
@@ -104,7 +108,7 @@ public:
 		if (GetKey(olc::ENTER).bPressed)
 		{
 			autoAdvance = !autoAdvance;
-			fTimeSoFar = 0.0f;
+			fTimeSoFar = fTicRate;
 		}
 		if (GetKey(olc::Q).bPressed)
 		{
@@ -120,12 +124,8 @@ public:
 		{
 			for (int y = 0; y < vTilesOnScreen.y + 1; y++)
 			{
-				olc::Pixel tileColor;
-				if (room[y * roomWidth + x])
-					tileColor = olc::WHITE;
-				else
-					tileColor = olc::DARK_GREEN;
-				FillRect(x * tileWidth, y * tileHeight, tileWidth - 1, tileHeight - 1, tileColor);
+				FillRect(x * tileWidth, y * tileHeight, tileWidth - 1, tileHeight - 1,
+					(room[y * roomWidth + x]) ? olc::WHITE : olc::DARK_GREEN);
 			}
 		}
 		FillRect((vHighlightPos - vTopLeftTile) * tileWidth, olc::vi2d(tileWidth - 1, tileHeight - 1),
